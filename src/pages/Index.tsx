@@ -1,12 +1,64 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import React, { useState, useCallback } from 'react';
+import Header from '../components/Header';
+import Navigation from '../components/Navigation';
+import Dashboard from '../components/Dashboard';
+import WorkoutForm from '../components/WorkoutForm';
+import DietForm from '../components/DietForm';
+import WeightForm from '../components/WeightForm';
+import MotivationalCard from '../components/MotivationalCard';
 
 const Index = () => {
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [dailyStats, setDailyStats] = useState({
+    caloriesBurned: 0,
+    caloriesConsumed: 0,
+    workouts: 0,
+    weight: 0
+  });
+
+  // Callback to refresh dashboard when new data is added
+  const handleDataUpdate = useCallback(() => {
+    setRefreshTrigger(prev => prev + 1);
+  }, []);
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'dashboard':
+        return (
+          <div className="space-y-6">
+            <Dashboard 
+              refreshTrigger={refreshTrigger} 
+              onStatsUpdate={setDailyStats}
+            />
+            <MotivationalCard dailyStats={dailyStats} />
+          </div>
+        );
+      case 'workout':
+        return <WorkoutForm onWorkoutAdded={handleDataUpdate} />;
+      case 'diet':
+        return <DietForm onDietAdded={handleDataUpdate} />;
+      case 'weight':
+        return <WeightForm onWeightAdded={handleDataUpdate} />;
+      default:
+        return <Dashboard refreshTrigger={refreshTrigger} />;
+    }
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-background">
+      <Header />
+      
+      <main className="container mx-auto px-4 py-6 space-y-6">
+        <Navigation activeTab={activeTab} setActiveTab={setActiveTab} />
+        
+        <div className="animate-in fade-in-50 duration-500">
+          {renderContent()}
+        </div>
+      </main>
+      
+      {/* Background gradient for visual appeal */}
+      <div className="fixed inset-0 -z-10 bg-gradient-to-br from-background via-background to-primary/5" />
     </div>
   );
 };

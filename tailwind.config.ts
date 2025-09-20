@@ -57,6 +57,13 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        fitness: {
+          success: "hsl(var(--fitness-success))",
+          warning: "hsl(var(--fitness-warning))",
+          info: "hsl(var(--fitness-info))",
+          calories: "hsl(var(--fitness-calories))",
+          weight: "hsl(var(--fitness-weight))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
