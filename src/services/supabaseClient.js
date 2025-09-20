@@ -1,9 +1,13 @@
 import { createClient } from '@supabase/supabase-js';
 
 // CalTrack Supabase Configuration
-// Replace these with your actual Supabase credentials
-const supabaseUrl = "https://uebdvnnwwfmwwsekubvh.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVlYmR2bm53d2Ztd3dzZWt1YnZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgzMzk0NjIsImV4cCI6MjA3MzkxNTQ2Mn0.zjvBrC1op1w8kTRnIzo9Dra6D-Poq8Q1UQLMoiPn5Nw";
+// Using environment variables for security
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
+if (!supabaseUrl || !supabaseKey) {
+  throw new Error('Missing Supabase environment variables. Please check your .env file.');
+}
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
 

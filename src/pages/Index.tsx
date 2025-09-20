@@ -6,6 +6,7 @@ import WorkoutForm from '../components/WorkoutForm';
 import DietForm from '../components/DietForm';
 import WeightForm from '../components/WeightForm';
 import MotivationalCard from '../components/MotivationalCard';
+import Footer from '../components/Footer';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -46,16 +47,18 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
+    <div className="min-h-screen bg-background flex flex-col">
+      <Header dailyStats={dailyStats} />
       
-      <main className="container mx-auto px-4 py-6 space-y-6">
-        <Navigation activeTab={activeTab} setActiveTab={setActiveTab} />
+      <main className="container mx-auto px-4 py-6 space-y-6 flex-1">
+        <Navigation activeTab={activeTab} setActiveTab={setActiveTab} dailyStats={dailyStats} />
         
         <div className="animate-in fade-in-50 duration-500">
           {renderContent()}
         </div>
       </main>
+      
+      <Footer />
       
       {/* Background gradient for visual appeal */}
       <div className="fixed inset-0 -z-10 bg-gradient-to-br from-background via-background to-primary/5" />

@@ -6,8 +6,8 @@ import { Label } from '@/components/ui/label';
 import { Brain, Sparkles, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 
-// LLM API Configuration
-const LLM_API_KEY = "AIzaSyBc0-5OtwZtiEeu7jFzt1kQxi1iNW8h1OE";
+// LLM API Configuration - Remove hardcoded key for security
+const LLM_API_KEY = "";
 
 const MotivationalCard = ({ dailyStats }) => {
   const [motivationalMessage, setMotivationalMessage] = useState('');
@@ -16,13 +16,14 @@ const MotivationalCard = ({ dailyStats }) => {
   const [showApiInput, setShowApiInput] = useState(false);
 
   const generateMotivationalMessage = async (stats) => {
-    if (!apiKey) {
-      toast.error('Please enter your LLM API key');
-      return;
-    }
-
     setIsLoading(true);
     try {
+      // If no API key is provided, use fallback messages immediately
+      if (!apiKey || apiKey.trim() === '') {
+        generateFallbackMessage(stats);
+        return;
+      }
+
       const prompt = `User burned ${stats.caloriesBurned} calories today, ate ${stats.caloriesConsumed} calories, completed ${stats.workouts} workout(s), and weighs ${stats.weight}kg. Generate a short, encouraging motivational message (max 20 words) that acknowledges their progress and motivates them to continue their fitness journey.`;
 
       // This is a placeholder for the actual LLM API call
@@ -61,22 +62,26 @@ const MotivationalCard = ({ dailyStats }) => {
 
     } catch (error) {
       console.error('Error generating motivational message:', error);
-      
-      // Fallback motivational messages based on user stats
-      const fallbackMessages = [
-        stats.caloriesBurned > 300 ? "Amazing calorie burn today! You're on fire! 🔥" : "Every step forward is progress! Keep going! 💪",
-        stats.workouts > 0 ? "Consistency is key! Great job staying active today! ⭐" : "Tomorrow is a fresh start for your fitness goals! 🌟",
-        stats.caloriesConsumed > 0 ? "Fuel your body, fuel your dreams! Keep tracking! 📊" : "Small steps lead to big transformations! 🚀",
-        "Your dedication today shapes your stronger tomorrow! 💫",
-        "Progress over perfection - you're doing great! 🎯"
-      ];
-      
-      const randomMessage = fallbackMessages[Math.floor(Math.random() * fallbackMessages.length)];
-      setMotivationalMessage(randomMessage);
-      
+      generateFallbackMessage(stats);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const generateFallbackMessage = (stats) => {
+    // Enhanced fallback motivational messages based on user stats
+    const fallbackMessages = [
+      stats.caloriesBurned > 300 ? "Amazing calorie burn today! You're on fire! 🔥" : "Every step forward is progress! Keep going! 💪",
+      stats.workouts > 0 ? "Consistency is key! Great job staying active today! ⭐" : "Tomorrow is a fresh start for your fitness goals! 🌟",
+      stats.caloriesConsumed > 0 ? "Fuel your body, fuel your dreams! Keep tracking! 📊" : "Small steps lead to big transformations! 🚀",
+      "Your dedication today shapes your stronger tomorrow! 💫",
+      "Progress over perfection - you're doing great! 🎯",
+      stats.caloriesBurned > stats.caloriesConsumed ? "Great calorie deficit! You're crushing your goals! 🏆" : "Balance is key! Keep tracking your journey! ⚖️",
+      stats.workouts >= 2 ? "Multiple workouts today? You're unstoppable! 🚀" : "One workout at a time builds lasting habits! 💪"
+    ];
+    
+    const randomMessage = fallbackMessages[Math.floor(Math.random() * fallbackMessages.length)];
+    setMotivationalMessage(randomMessage);
   };
 
   useEffect(() => {
